@@ -1,0 +1,17 @@
+name: TestProject
+version: !!str 0.0.1
+description: Simple test project
+
+modules:
+- name: Helper1
+  files:
+    - helper.cpp
+- name: Helper2
+  files:
+    - utils.cpp
+  submodules:
+    - name: Helper3
+      files:
+        - file.cpp
+  dependencies:
+    - Helper1
