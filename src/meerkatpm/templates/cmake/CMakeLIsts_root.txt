@@ -40,12 +40,14 @@ set(CMAKE_LINKER_FLAGS_DEBUG "${{CMAKE_LINKER_FLAGS}}-D _DEBUG -ggdb3 -std=c++2a
     -fsanitize=address,alignment,bool,bounds,enum,float-cast-overflow,float-divide-by-zero,integer-divide-by-zero,leak,nonnull-attribute,null,object-size,return,returns-nonnull-attribute,shift,signed-integer-overflow,undefined,unreachable,vla-bound,vptr\
     -pie -Wlarger-than=8192 -Wstack-usage=8192") 
 
-set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS}-D NLOGS -std=c++2a -Ofast -Wall")
-set(CMAKE_LINKER_FLAGS_RELEASE "${CMAKE_LINKER_FLAGS}-D NLOGS -std=c++2a -Ofast -Wall")
+set(CMAKE_CXX_FLAGS_RELEASE "${{CMAKE_CXX_FLAGS}}-D NLOGS -std=c++2a -Ofast -Wall")
+set(CMAKE_LINKER_FLAGS_RELEASE "${{CMAKE_LINKER_FLAGS}}-D NLOGS -std=c++2a -Ofast -Wall")
 
-include_directories(include/)
 link_directories(lib/)
+include_directories(lib/include/)
+
 add_subdirectory(src/)
+target_include_directories({project_name} PUBLIC include/)
 
 install(TARGETS {project_name}
         RUNTIME
@@ -53,10 +55,10 @@ install(TARGETS {project_name}
 
 if(NOT TARGET uninstall)
   configure_file(
-    "${CMAKE_CURRENT_SOURCE_DIR}/cmake_uninstall.cmake"
-    "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake"
+    "${{CMAKE_CURRENT_SOURCE_DIR}}/cmake_uninstall.cmake"
+    "${{CMAKE_CURRENT_BINARY_DIR}}/cmake_uninstall.cmake"
     IMMEDIATE @ONLY)
 
   add_custom_target(uninstall
-    COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake)
+    COMMAND ${{CMAKE_COMMAND}} -P ${{CMAKE_CURRENT_BINARY_DIR}}/cmake_uninstall.cmake)
 endif()

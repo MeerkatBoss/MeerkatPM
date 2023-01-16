@@ -1,6 +1,9 @@
 name: TestProject
-version: !!str 0.0.1
+type: exe
+version: '0.0.1'
 description: Simple test project
+files:
+- main.cpp
 
 modules:
 - name: Helper1

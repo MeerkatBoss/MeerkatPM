@@ -1,3 +1,0 @@
-add_library({module_name} {src_files})
-
-target_include_directories({module_name} PUBLIC include/)
