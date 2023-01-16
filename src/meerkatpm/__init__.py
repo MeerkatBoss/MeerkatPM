@@ -1,6 +1,6 @@
 import sys
 
-from meerkatpm.routers.router import RouterDispatcher
+from meerkatpm.flow import RouterDispatcher
 from meerkatpm.routers import project
 
 dispatcher = RouterDispatcher()
@@ -10,7 +10,7 @@ def main() -> None:
     if len(sys.argv) < 2:
         print("No command given")
         return
-    dispatcher.dispatch(sys.argv[1], sys.argv[2:])
+    dispatcher.run_program(sys.argv)
 
 if __name__ == '__main__':
     main()
