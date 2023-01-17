@@ -21,4 +21,7 @@ def get_project_cmake(project: Project) -> str:
     result += cmake_add_subdirectories(modules)
     result += cmake_link_dependencies(project.name, modules, "PRIVATE")
 
+    if project.type == 'exe':
+        result += f"add_run_target({project.name})\n"
+
     return result

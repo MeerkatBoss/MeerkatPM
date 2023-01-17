@@ -45,9 +45,9 @@ set(CMAKE_LINKER_FLAGS_RELEASE "${{CMAKE_LINKER_FLAGS}}-D NLOGS -std=c++2a -Ofas
 
 link_directories(lib/)
 include_directories(lib/include/)
+include_directories(include/)
 
 add_subdirectory(src/)
-target_include_directories({project_name} PUBLIC include/)
 
 install(TARGETS {project_name}
         RUNTIME

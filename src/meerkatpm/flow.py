@@ -13,7 +13,7 @@ from meerkatpm.models import Project, Module
 from meerkatpm.exceptions import UsageError
 from meerkatpm.routers import Router
 
-yaml = YAML(typ='safe')
+yaml = YAML()
 yaml.register_class(Project)
 yaml.register_class(Module)
 

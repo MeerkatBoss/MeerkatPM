@@ -1,1 +1,1 @@
-#include <{file_name}>
+#include <{file_name}.h>

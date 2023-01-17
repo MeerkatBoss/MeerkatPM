@@ -1,6 +1,6 @@
 /**
  * @file {file_name}.h
- * @author {author} ({author_name})
+ * @author {author} ({author_email})
  * @brief
  * @version 0.1
  * @date {date} 
