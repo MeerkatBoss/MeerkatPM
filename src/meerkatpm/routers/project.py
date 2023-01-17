@@ -8,7 +8,6 @@ from typing import List, Optional
 from meerkatpm.routers import Router
 from meerkatpm.utils import assert_error
 from meerkatpm.models import Project
-from meerkatpm.codegen import get_project_cmake
 
 router = Router("project")
 
@@ -40,8 +39,6 @@ def project_exe(args: List[str], old_project: Optional[Project]) -> Project:
         file.write(cmake_root)
     with open('src/main.cpp', 'w') as file:
         file.write(main)
-    with open('src/CMakeLists.txt', 'w') as file:
-        file.write(get_project_cmake(project))
 
     return project
 
@@ -52,7 +49,7 @@ def project_lib(args: List[str], old_project: Optional[Project]) -> Project:
     assert_error(old_project is None, "Project already created")
     init_folders()
 
-    project = Project(name=args[0], type='exe', files=[f'{args[0]}.cpp'])
+    project = Project(name=args[0], type='lib', files=[f'{args[0]}.cpp'])
     cmake_root = read_text('meerkatpm.templates.cmake', 'CMakeLists.txt').format(project_name=project.name)
     lib_cpp = read_text('meerkatpm.templates.cpp', 'file.cpp').format(file_name=project.name)
     lib_h = read_text('meerkatpm.templates.cpp', 'file.h')\
@@ -69,7 +66,5 @@ def project_lib(args: List[str], old_project: Optional[Project]) -> Project:
         file.write(lib_cpp)
     with open(f'include/{project.name}.h', 'w') as file:
         file.write(lib_h)
-    with open('src/CMakeLists.txt', 'w') as file:
-        file.write(get_project_cmake(project))
     
     return project

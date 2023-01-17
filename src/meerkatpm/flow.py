@@ -1,21 +1,32 @@
 import os
 from typing import Optional, List
+from pathlib import Path
 
 from ruamel.yaml import YAML
-
-from yaml import load, dump
-try:
-    from yaml import CLoader as Loader, CDumper as Dumper
-except ImportError:
-    from yaml import Loader, Dumper
 
 from meerkatpm.models import Project, Module
 from meerkatpm.exceptions import UsageError
 from meerkatpm.routers import Router
+from meerkatpm.codegen import get_module_cmake, get_project_cmake
 
 yaml = YAML()
 yaml.register_class(Project)
 yaml.register_class(Module)
+
+def update_module_cmake(module: Module, path: Path) -> None:
+    with path.joinpath('CMakeLists.txt').open('w') as file:
+        file.write(get_module_cmake(module))
+    for m in module.submodules:
+        update_module_cmake(m, path/m.name)
+
+def update_project_files(project: Project) -> None:
+    with open('manifest.yaml', 'w') as file:
+        yaml.dump(project, file)
+    src_path = Path('src/')
+    for m in project.modules:
+        update_module_cmake(m, src_path/m.name)
+    with src_path.joinpath('CMakeLists.txt').open('w') as file:
+        file.write(get_project_cmake(project))
 
 class RouterDispatcher:
     routers: List[Router] = []
@@ -46,6 +57,5 @@ class RouterDispatcher:
         except UsageError as e:
             print(f"Incorrect usage of command '{cmd}': {e.args}")
             return
-        
-        with open('manifest.yaml', 'w') as file:
-            yaml.dump(self.project, file)
+
+        update_project_files(self.project)
