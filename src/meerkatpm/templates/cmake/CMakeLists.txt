@@ -49,10 +49,6 @@ include_directories(include/)
 
 add_subdirectory(src/)
 
-install(TARGETS {project_name}
-        RUNTIME
-        CONFIGURATIONS Release)
-
 if(NOT TARGET uninstall)
   configure_file(
     "${{CMAKE_CURRENT_SOURCE_DIR}}/cmake_uninstall.cmake"

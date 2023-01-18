@@ -1,1 +1,1 @@
-#include <{file_name}.h>
+#include <{file_name}.hpp>

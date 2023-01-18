@@ -52,7 +52,7 @@ def project_lib(args: List[str], old_project: Optional[Project]) -> Project:
     project = Project(name=args[0], type='lib', files=[f'{args[0]}.cpp'])
     cmake_root = read_text('meerkatpm.templates.cmake', 'CMakeLists.txt').format(project_name=project.name)
     lib_cpp = read_text('meerkatpm.templates.cpp', 'file.cpp').format(file_name=project.name)
-    lib_h = read_text('meerkatpm.templates.cpp', 'file.h')\
+    lib_h = read_text('meerkatpm.templates.cpp', 'file.hpp')\
                 .format(file_name=project.name,
                         FILE_CAPS=project.name.upper(),
                         author='<Your name here>',
@@ -64,7 +64,7 @@ def project_lib(args: List[str], old_project: Optional[Project]) -> Project:
         file.write(cmake_root)
     with open(f'src/{project.name}.cpp', 'w') as file:
         file.write(lib_cpp)
-    with open(f'include/{project.name}.h', 'w') as file:
+    with open(f'include/{project.name}.hpp', 'w') as file:
         file.write(lib_h)
     
     return project

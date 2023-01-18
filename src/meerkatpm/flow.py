@@ -25,6 +25,7 @@ def update_project_files(project: Project) -> None:
     src_path = Path('src/')
     for m in project.modules:
         update_module_cmake(m, src_path/m.name)
+
     with src_path.joinpath('CMakeLists.txt').open('w') as file:
         file.write(get_project_cmake(project))
 
