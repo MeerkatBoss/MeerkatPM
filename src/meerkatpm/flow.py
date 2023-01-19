@@ -52,20 +52,25 @@ class RouterDispatcher:
         self.routers.append(router)
 
     def run_program(self, argv: List[str]) -> None:
-        if len(argv) < 2:
-            print("Incorrect usage: not enough arguments")
+        if len(argv) < 1:
+            print("Incorrect usage: no arguments")
             return
+        
+        argv = argv[1:]
 
-        cmd = argv[1]
+        cmd = argv[0]
         if cmd not in [r.name for r in self.routers]:
             print(f"Incorrect usage: unknown command '{cmd}'")
             return
 
         router = [r for r in self.routers if r.name == cmd][0]
         try:
-            self.project = router.dispatch(argv[2], argv[3:], self.project)
+            if len(argv) >= 2 and router.has_handler(argv[1]):
+                self.project = router.dispatch(argv[1], argv[2:], self.project)
+            else:
+                self.project = router.empty_handler(argv[1:], self.project)
         except UsageError as e:
-            print(f"Incorrect usage of command '{cmd}': {e.args}")
+            print(f"Incorrect usage of command '{cmd}': {e.args[0]}")
             return
 
         update_project_files(self.project)

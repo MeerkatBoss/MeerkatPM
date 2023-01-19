@@ -1,10 +1,11 @@
 import sys
 
 from meerkatpm.flow import RouterDispatcher
-from meerkatpm.routers import project
+from meerkatpm.routers import project, build
 
 dispatcher = RouterDispatcher()
 dispatcher.add_router(project.router)
+dispatcher.add_router(build.router)
 
 def main() -> None:
     if len(sys.argv) < 2:

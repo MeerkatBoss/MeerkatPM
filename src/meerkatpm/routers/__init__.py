@@ -11,8 +11,8 @@ class Router:
         
         self.name = command
         self.handlers: Dict[str, RouteHandler] = {}
-        self.empty_handler =\
-            lambda *_: utils.assert_error(False, f"Cannot invoke '{self.name}' command without parameter")
+        self.empty_handler: RouteHandler =\
+            lambda *_: utils.assert_error(False, f"No command parameter provided") # type: ignore
         pass
 
     def handler(self, cmd: str):
@@ -27,9 +27,12 @@ class Router:
         self.empty_handler = func
         return func
     
+    def has_handler(self, cmd: str):
+        return cmd in self.handlers.keys()
+    
     def dispatch(self, cmd: str, args: List[str], project: Optional[Project]) -> Project:
         utils.assert_error(
-            cmd in self.handlers.keys(),
+            self.has_handler(cmd),
             f"Unknown '{self.name}' command: '{cmd}'"
         )
 
