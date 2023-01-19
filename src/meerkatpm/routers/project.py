@@ -1,6 +1,5 @@
 import os
 import shutil
-import datetime
 
 from importlib.resources import read_text, path
 from typing import List, Optional
@@ -8,6 +7,7 @@ from typing import List, Optional
 from meerkatpm.routers import Router
 from meerkatpm.utils import assert_error, progress_report
 from meerkatpm.models import Project
+from meerkatpm.codegen import get_cpp_header, get_cpp_source
 
 router = Router("project")
 
@@ -68,19 +68,11 @@ def project_lib(args: List[str], old_project: Optional[Project]) -> Project:
     add_cmake(name)
 
     project = Project(name=args[0], type='lib', sources=[f'{args[0]}.cpp'])
-    lib_cpp = read_text('meerkatpm.templates.cpp', 'file.cpp').format(file_name=project.name)
-    lib_h = read_text('meerkatpm.templates.cpp', 'file.hpp')\
-                .format(file_name=project.name,
-                        FILE_CAPS=project.name.upper(),
-                        author='<Your name here>',
-                        author_email='<Your email here>',
-                        date=datetime.date.today(),
-                        year=datetime.date.today().year)
     
     with open(f'src/{project.name}.cpp', 'w') as file:
-        file.write(lib_cpp)
+        file.write(get_cpp_source(project.name))
     with open(f'include/{project.name}.hpp', 'w') as file:
-        file.write(lib_h)
+        file.write(get_cpp_header(project.name, project))
     
     print(f"Created project '{project.name}'")
     return project

@@ -1,4 +1,7 @@
+import datetime
+
 from itertools import chain
+from importlib.resources import read_text, path
 
 from meerkatpm.models import Module, Project
 
@@ -13,6 +16,7 @@ def get_module_cmake(module: Module) -> str:
 
     result += f"target_include_directories({module.name} PUBLIC ${{CMAKE_CURRENT_LIST_DIR}})\n"
     return result
+
 
 def get_project_cmake(project: Project) -> str:
     type = 'executable' if project.type == 'exe' else 'library'
@@ -38,5 +42,18 @@ def get_project_cmake(project: Project) -> str:
         headers = ' '.join(headers)
         result += f"install(FILES {headers} TYPE INCLUDE)\n"
 
-
     return result
+
+
+def get_cpp_source(name: str) -> str:
+    return read_text('meerkatpm.templates.cpp', 'file.cpp').format(file_name=name)
+
+
+def get_cpp_header(name: str, project: Project) -> str:
+    return read_text('meerkatpm.templates.cpp', 'file.hpp')\
+                .format(file_name=name,
+                        FILE_CAPS=name.upper,
+                        author=project.author or '<Your name here>',
+                        author_email=project.author_email or '<Your email here>',
+                        date=datetime.date.today(),
+                        year=datetime.date.today().year)
