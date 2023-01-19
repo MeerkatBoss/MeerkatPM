@@ -67,7 +67,7 @@ def project_lib(args: List[str], old_project: Optional[Project]) -> Project:
     init_folders()
     add_cmake(name)
 
-    project = Project(name=args[0], type='lib', sources=[f'{args[0]}.cpp'])
+    project = Project(name=name, type='lib', sources=[f'{args[0]}.cpp'])
     
     with open(f'src/{project.name}.cpp', 'w') as file:
         file.write(get_cpp_source(project.name))

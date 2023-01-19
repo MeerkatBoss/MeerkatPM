@@ -16,6 +16,17 @@ class Module:
         self.dependencies = dependencies
         pass
 
+    def find_submodule(self, name: str) -> Optional['Module']:
+        module_name, _, submodule_path = name.partition('/')
+        module = ([m for m in self.submodules if m.name == module_name] or [None])[0]
+        if not module:
+            return None
+        if not submodule_path:
+            return module
+        return module.find_submodule(submodule_path)
+
+    
+
 class Project:
     def __init__(self, *,
                 name: str,
@@ -36,3 +47,12 @@ class Project:
         self.headers = headers
         self.sources = sources
         self.modules = modules
+
+    def find_module(self, name: str) -> Optional[Module]:
+        module_name, _, submodule_path = name.partition('/')
+        module = ([m for m in self.modules if m.name == module_name] or [None])[0]
+        if not module:
+            return None
+        if not submodule_path:
+            return module
+        return module.find_submodule(submodule_path)

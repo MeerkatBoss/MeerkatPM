@@ -28,7 +28,6 @@ def get_project_cmake(project: Project) -> str:
     result += cmake_link_dependencies(project.name, modules, "PRIVATE")
 
     include_dir = '${PROJECT_SOURCE_DIR}/include/' 
-    result += f'target_include_directories({project.name} PUBLIC {include_dir})\n'
 
     if project.type == 'exe':
         result += f"add_run_target({project.name})\n"
@@ -52,7 +51,7 @@ def get_cpp_source(name: str) -> str:
 def get_cpp_header(name: str, project: Project) -> str:
     return read_text('meerkatpm.templates.cpp', 'file.hpp')\
                 .format(file_name=name,
-                        FILE_CAPS=name.upper,
+                        FILE_CAPS=name.upper(),
                         author=project.author or '<Your name here>',
                         author_email=project.author_email or '<Your email here>',
                         date=datetime.date.today(),
