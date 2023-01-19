@@ -1,9 +1,11 @@
+from itertools import chain
+
 from meerkatpm.models import Module, Project
 
 from .helpers import cmake_add_subdirectories, cmake_link_dependencies
 
 def get_module_cmake(module: Module) -> str:
-    result = f"add_library({module.name} {' '.join(module.files)})\n"
+    result = f"add_library({module.name} {' '.join(module.sources)})\n"
     submodules = [m.name for m in module.submodules]
 
     result += cmake_add_subdirectories(submodules)
@@ -14,7 +16,7 @@ def get_module_cmake(module: Module) -> str:
 
 def get_project_cmake(project: Project) -> str:
     type = 'executable' if project.type == 'exe' else 'library'
-    result = f"add_{type}({project.name} {' '.join(project.files)})\n"
+    result = f"add_{type}({project.name} {' '.join(project.sources)})\n"
 
     modules = [m.name for m in project.modules]
     
@@ -30,7 +32,8 @@ def get_project_cmake(project: Project) -> str:
     result += f"install(TARGETS {project.name} RUNTIME CONFIGURATIONS Release)\n"
 
     if project.type == 'lib':
-        headers = (file.replace('.c', '.h') for file in project.files)
+        headers = (file.replace('.c', '.h') for file in project.sources)
+        headers = chain(headers, project.headers)
         headers = (include_dir + file for file in headers)
         headers = ' '.join(headers)
         result += f"install(FILES {headers} TYPE INCLUDE)\n"

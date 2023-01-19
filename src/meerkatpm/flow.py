@@ -1,4 +1,5 @@
 import os
+import subprocess
 from typing import Optional, List
 from pathlib import Path
 
@@ -8,6 +9,7 @@ from meerkatpm.models import Project, Module
 from meerkatpm.exceptions import UsageError
 from meerkatpm.routers import Router
 from meerkatpm.codegen import get_module_cmake, get_project_cmake
+from meerkatpm.utils import progress_report
 
 yaml = YAML()
 yaml.register_class(Project)
@@ -19,6 +21,7 @@ def update_module_cmake(module: Module, path: Path) -> None:
     for m in module.submodules:
         update_module_cmake(m, path/m.name)
 
+@progress_report("Updating project files")
 def update_project_files(project: Project) -> None:
     with open('manifest.yaml', 'w') as file:
         yaml.dump(project, file)
@@ -28,6 +31,12 @@ def update_project_files(project: Project) -> None:
 
     with src_path.joinpath('CMakeLists.txt').open('w') as file:
         file.write(get_project_cmake(project))
+
+@progress_report("Running cmake")
+def run_cmake() -> None:
+    subprocess.run(['cmake', '-S.', '-Bbuild/Debug', '-DCMAKE_BUILD_TYPE=Debug'], stdout=subprocess.DEVNULL)
+    subprocess.run(['cmake', '-S.', '-Bbuild/Release', '-DCMAKE_BUILD_TYPE=Release'], stdout=subprocess.DEVNULL)
+
 
 class RouterDispatcher:
     routers: List[Router] = []
@@ -60,3 +69,4 @@ class RouterDispatcher:
             return
 
         update_project_files(self.project)
+        run_cmake()
