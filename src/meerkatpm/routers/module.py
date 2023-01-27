@@ -9,8 +9,8 @@ from meerkatpm.codegen import get_cpp_header, get_cpp_source
 
 router = Router('module')
 
-@router.handler('new')
-def module_new(args: List[str], project: Optional[Project]) -> Project:
+@router.handler('add')
+def module_add(args: List[str], project: Optional[Project]) -> Project:
     assert_error(project is not None, "No project manifest found.")
     assert project is not None # never throws
     assert_error(len(args) > 0, "No module name provided")
@@ -36,3 +36,17 @@ def module_new(args: List[str], project: Optional[Project]) -> Project:
         file.write(get_cpp_header(module.name, project))
 
     return project
+
+
+# @router.handler('rm')
+# def module_rm(args: List[str], project: Optional[Project]) -> Project:
+#     assert_error(project is not None, "No project manifest found.")
+#     assert project is not None # never throws
+#     assert_error(len(args) > 0, "No module name provided")
+#     assert_error(len(args) <= 1, "Too many arguments")
+#     path = args[0]
+#     module = project.find_module(path)
+
+#     return project
+
+

@@ -1,5 +1,5 @@
 from functools import partial
-from typing import Callable, TypeVar
+from typing import Callable, TypeVar, Iterable, Optional
 import string
 
 from meerkatpm.exceptions import UsageError
@@ -14,8 +14,15 @@ def assert_error(cond: bool, message: str, callback: Callable[[], None] = do_not
 def has_whitespace(s: str) -> bool:
     return any(c in s for c in string.whitespace)
 
-T = TypeVar('T', bound=Callable)
-Decorator = Callable[[T], T]
+TValue = TypeVar('TValue')
+def first_or_none(seq: Iterable[TValue]) -> Optional[TValue]:
+    try:
+        return next(iter(seq))
+    except StopIteration:
+        return None
+
+TCallable = TypeVar('TCallable', bound=Callable)
+Decorator = Callable[[TCallable], TCallable]
 
 progress_report: Callable[[str], Decorator] =\
         lambda msg: lambda func: lambda *args: progress_report_impl(msg, func, *args)

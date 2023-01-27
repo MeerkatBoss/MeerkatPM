@@ -3,14 +3,12 @@ from typing import Optional, List, Literal
 class Module:
     def __init__(self, *,
                 name: str,
-                headers: List[str] = [],
-                sources: List[str],
                 description: Optional[str] = None,
+                sources: List[str],
                 submodules: List['Module'] = [],
                 dependencies: List[str] = []) -> None:
         self.name = name
         self.description = description
-        self.headers = headers
         self.sources = sources
         self.submodules = submodules
         self.dependencies = dependencies
@@ -24,7 +22,6 @@ class Module:
         if not submodule_path:
             return module
         return module.find_submodule(submodule_path)
-
     
 
 class Project:
