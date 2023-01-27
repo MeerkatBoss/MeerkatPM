@@ -10,9 +10,10 @@ from .helpers import cmake_add_subdirectories, cmake_link_dependencies
 def get_module_cmake(module: Module) -> str:
     result = f"add_library({module.name} {' '.join(module.sources)})\n"
     submodules = [m.name for m in module.submodules]
+    dependencies = [m.name for m in module.dependencies]
 
     result += cmake_add_subdirectories(submodules)
-    result += cmake_link_dependencies(module.name, module.dependencies + submodules, "PUBLIC")
+    result += cmake_link_dependencies(module.name, dependencies + submodules, "PUBLIC")
 
     result += f"target_include_directories({module.name} PUBLIC ${{CMAKE_CURRENT_LIST_DIR}})\n"
     return result
@@ -52,7 +53,7 @@ def get_cpp_header(name: str, project: Project) -> str:
     return read_text('meerkatpm.templates.cpp', 'file.hpp')\
                 .format(file_name=name,
                         FILE_CAPS=name.upper(),
-                        author=project.author or '<Your name here>',
-                        author_email=project.author_email or '<Your email here>',
+                        author='<Your name here>',
+                        author_email='<Your email here>',
                         date=datetime.date.today(),
                         year=datetime.date.today().year)

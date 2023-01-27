@@ -3,17 +3,13 @@ import subprocess
 from typing import Optional, List
 from pathlib import Path
 
-from ruamel.yaml import YAML
+import yaml
 
 from meerkatpm.models import Project, Module
 from meerkatpm.exceptions import UsageError
 from meerkatpm.routers import Router
 from meerkatpm.codegen import get_module_cmake, get_project_cmake
 from meerkatpm.utils import progress_report
-
-yaml = YAML()
-yaml.register_class(Project)
-yaml.register_class(Module)
 
 def update_module_cmake(module: Module, path: Path) -> None:
     with path.joinpath('CMakeLists.txt').open('w') as file:
@@ -23,8 +19,9 @@ def update_module_cmake(module: Module, path: Path) -> None:
 
 @progress_report("Updating project files")
 def update_project_files(project: Project) -> None:
+    project.reorder_for_compilation()
     with open('manifest.yaml', 'w') as file:
-        yaml.dump(project, file)
+        yaml.safe_dump(project.to_dict(), file, sort_keys=False, default_flow_style=False)
     src_path = Path('src/')
     for m in project.modules:
         update_module_cmake(m, src_path/m.name)
@@ -45,7 +42,7 @@ class RouterDispatcher:
     def __init__(self) -> None:
         if os.path.exists('manifest.yaml'):
             with open('manifest.yaml', 'r') as file:
-                self.project = yaml.load(file)
+                self.project = Project.from_dict(yaml.safe_load(file))
 
     def add_router(self, router: Router) -> None:
         assert router.name not in [r.name for r in self.routers]

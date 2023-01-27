@@ -11,6 +11,7 @@ router = Router('module')
 
 @router.handler('add')
 def module_add(args: List[str], project: Optional[Project]) -> Project:
+    raise NotImplementedError()
     assert_error(project is not None, "No project manifest found.")
     assert project is not None # never throws
     assert_error(len(args) > 0, "No module name provided")

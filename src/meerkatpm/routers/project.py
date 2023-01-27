@@ -49,7 +49,7 @@ def project_exe(args: List[str], old_project: Optional[Project]) -> Project:
     init_folders()
     add_cmake(name)
 
-    project = Project(name=args[0], type='exe', sources=['main.cpp'])
+    project = Project(name=args[0], type='exe', sources=['main.cpp'], headers=[])
     main = read_text('meerkatpm.templates.cpp', 'main.cpp').format(project_name=project.name)
 
     with open('src/main.cpp', 'w') as file:
@@ -67,7 +67,7 @@ def project_lib(args: List[str], old_project: Optional[Project]) -> Project:
     init_folders()
     add_cmake(name)
 
-    project = Project(name=name, type='lib', sources=[f'{args[0]}.cpp'])
+    project = Project(name=name, type='lib', sources=[f'{args[0]}.cpp'], headers=[f'{args[0]}.h'])
     
     with open(f'src/{project.name}.cpp', 'w') as file:
         file.write(get_cpp_source(project.name))
