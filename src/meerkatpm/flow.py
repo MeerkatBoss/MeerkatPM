@@ -11,6 +11,11 @@ from meerkatpm.routers import Router
 from meerkatpm.codegen import get_module_cmake, get_project_cmake
 from meerkatpm.utils import progress_report
 
+def represent_none(self, _):
+    return self.represent_scalar('tag:yaml.org,2002:null', '')
+
+yaml.add_representer(type(None), represent_none)
+
 def update_module_cmake(module: Module, path: Path) -> None:
     with path.joinpath('CMakeLists.txt').open('w') as file:
         file.write(get_module_cmake(module))

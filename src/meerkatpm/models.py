@@ -73,9 +73,13 @@ class Module:
 class Project:
     def __init__(self, name: str, type: Literal['exe', 'lib'],
                 sources: List[str], headers: List[str],
-                modules: List[Module] = []):
+                modules: List[Module] = [], author='',
+                author_email='', description=''):
         self.name = name
         self.type = type
+        self.author = author
+        self.author_email = author_email
+        self.description = description
         self.modules = modules or []
         self.sources = sources
         self.headers = headers
@@ -213,6 +217,9 @@ class Project:
         data = {
             "name": self.name,
             "type": self.type,
+            "author": self.author,
+            "author_email": self.author_email,
+            "description": self.description,
             "sources": self.sources,
             "headers": self.headers,
             "modules": [module.to_dict() for module in self.modules]
@@ -221,16 +228,19 @@ class Project:
 
     @classmethod
     def from_dict(cls, data: Dict) -> 'Project':
-        required_keys = {'name', 'type', 'modules', 'sources', 'headers'}
+        required_keys = {'name', 'type', 'modules', 'sources', 'headers', 'author', 'author_email', 'description'}
         if not required_keys.issubset(data.keys()):
-            raise ValueError(f"Missing required keys. Got {data.keys()}, expected {required_keys}")
+            raise UsageError(f"Missing required keys. Got {data.keys()}, expected {required_keys}")
         unknown_keys = data.keys() - required_keys
         if unknown_keys:
-            raise ValueError(f"Unknown keys {unknown_keys}")
+            raise UsageError(f"Unknown keys {unknown_keys}")
 
         partial_modules = [Module.from_dict(module_data) for module_data in data['modules']]
         name_to_module = {p.module.name: p.module for p in partial_modules}
         modules = [partial.resolve_dependencies(name_to_module) for partial in partial_modules]
 
-        return cls(name=data['name'], type=data['type'], sources=data['sources'], headers=data['headers'], modules=modules)
+        return cls(name=data['name'], type=data['type'],
+                    sources=data['sources'], headers=data['headers'],
+                    modules=modules, author=data['author'],
+                    author_email=data['author_email'], description=data['description'])
 

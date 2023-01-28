@@ -50,7 +50,7 @@ def get_cpp_header(name: str, project: Project) -> str:
     return read_text('meerkatpm.templates.cpp', 'file.h')\
                 .format(file_name=name,
                         FILE_CAPS=name.upper(),
-                        author='<Your name here>',
-                        author_email='<Your email here>',
+                        author=project.author or '<Your name here>',
+                        author_email=project.author_email or '<Your email here>',
                         date=datetime.date.today(),
                         year=datetime.date.today().year)
