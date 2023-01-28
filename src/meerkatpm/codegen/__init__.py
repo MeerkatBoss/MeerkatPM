@@ -47,7 +47,7 @@ def get_cpp_source(name: str) -> str:
 
 
 def get_cpp_header(name: str, project: Project) -> str:
-    return read_text('meerkatpm.templates.cpp', 'file.hpp')\
+    return read_text('meerkatpm.templates.cpp', 'file.h')\
                 .format(file_name=name,
                         FILE_CAPS=name.upper(),
                         author='<Your name here>',
