@@ -36,10 +36,7 @@ def get_project_cmake(project: Project) -> str:
     result += f"install(TARGETS {project.name} RUNTIME CONFIGURATIONS Release)\n"
 
     if project.type == 'lib':
-        headers = (file.replace('.c', '.h') for file in project.sources)
-        headers = chain(headers, project.headers)
-        headers = (include_dir + file for file in headers)
-        headers = ' '.join(headers)
+        headers = ' '.join(include_dir + file for file in project.headers)
         result += f"install(FILES {headers} TYPE INCLUDE)\n"
 
     return result

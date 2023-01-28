@@ -71,7 +71,7 @@ def project_lib(args: List[str], old_project: Optional[Project]) -> Project:
     
     with open(f'src/{project.name}.cpp', 'w') as file:
         file.write(get_cpp_source(project.name))
-    with open(f'include/{project.name}.hpp', 'w') as file:
+    with open(f'include/{project.name}.h', 'w') as file:
         file.write(get_cpp_header(project.name, project))
     
     print(f"Created project '{project.name}'")
