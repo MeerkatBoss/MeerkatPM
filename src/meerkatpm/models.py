@@ -72,11 +72,12 @@ class Module:
         
 class Project:
     def __init__(self, name: str, type: Literal['exe', 'lib'],
-                sources: List[str], headers: List[str],
+                sources: List[str], headers: List[str], version='0.0.1',
                 modules: List[Module] = [], author='',
                 author_email='', description=''):
         self.name = name
         self.type = type
+        self.version = version
         self.author = author
         self.author_email = author_email
         self.description = description
@@ -217,6 +218,7 @@ class Project:
         data = {
             "name": self.name,
             "type": self.type,
+            "version": self.version,
             "author": self.author,
             "author_email": self.author_email,
             "description": self.description,
@@ -228,7 +230,8 @@ class Project:
 
     @classmethod
     def from_dict(cls, data: Dict) -> 'Project':
-        required_keys = {'name', 'type', 'modules', 'sources', 'headers', 'author', 'author_email', 'description'}
+        required_keys = {
+            'name', 'type', 'version', 'modules', 'sources', 'headers', 'author', 'author_email', 'description'}
         if not required_keys.issubset(data.keys()):
             raise UsageError(f"Missing required keys. Got {data.keys()}, expected {required_keys}")
         unknown_keys = data.keys() - required_keys
@@ -239,7 +242,7 @@ class Project:
         name_to_module = {p.module.name: p.module for p in partial_modules}
         modules = [partial.resolve_dependencies(name_to_module) for partial in partial_modules]
 
-        return cls(name=data['name'], type=data['type'],
+        return cls(name=data['name'], type=data['type'], version=data['version'],
                     sources=data['sources'], headers=data['headers'],
                     modules=modules, author=data['author'],
                     author_email=data['author_email'], description=data['description'])

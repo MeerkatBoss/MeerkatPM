@@ -15,13 +15,23 @@ router = Router("project")
 def init_folders() -> None:
     assert_error(not os.listdir(), "Project directory is not empty")
 
+    os.mkdir('.vscode')
     os.mkdir('lib')
     os.mkdir('lib/include')
     os.mkdir('include')
     os.mkdir('src')
+    os.mkdir('doxygen')
     os.mkdir('build')
     os.mkdir('build/Debug')
     os.mkdir('build/Release')
+
+    with path('meerkatpm.templates', 'Doxyfile') as doxyfile:
+        shutil.copy(doxyfile, os.getcwd())
+    with path('meerkatpm.templates', '.gitignore') as gitignore:
+        shutil.copy(gitignore, os.getcwd())
+    with path('meerkatpm.templates', 'settings.json') as settings:
+        shutil.copy(settings, os.getcwd()+"/.vscode")
+    
 
 
 @progress_report("Generating cmake files")
@@ -75,4 +85,25 @@ def project_lib(args: List[str], old_project: Optional[Project]) -> Project:
         file.write(get_cpp_header(project.name, project))
     
     print(f"Created project '{project.name}'")
+    return project
+
+@router.handler("import")
+def project_import(args: List[str], project: Optional[Project]) -> Project:
+    assert_error(project is not None, "No project manifest found")
+    assert project
+    assert_error(len(args) > 0, "Imported project archive name not specified")
+    assert_error(len(args) < 2, "Too many arguments")
+
+    filename = args[0]
+
+    assert_error(os.path.exists(filename), f"Cannot find file {filename}")
+    assert_error(os.path.isfile(filename), f"{filename} is a directory")
+    assert_error(filename.endswith('.tar.gz'), "Invalid archive format")
+
+    os.mkdir('imports')
+    shutil.unpack_archive(filename, 'imports')
+    shutil.copytree('imports/lib', 'lib', dirs_exist_ok=True)
+    shutil.copytree('imports/include', 'lib/include', dirs_exist_ok=True)
+    shutil.rmtree('imports')
+    
     return project
