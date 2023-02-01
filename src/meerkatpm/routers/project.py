@@ -13,8 +13,6 @@ router = Router("project")
 
 @progress_report("Initializing project structure")
 def init_folders() -> None:
-    assert_error(not os.listdir(), "Project directory is not empty")
-
     os.mkdir('.vscode')
     os.mkdir('lib')
     os.mkdir('lib/include')
@@ -27,8 +25,8 @@ def init_folders() -> None:
 
     with path('meerkatpm.templates', 'Doxyfile') as doxyfile:
         shutil.copy(doxyfile, os.getcwd())
-    with path('meerkatpm.templates', '.gitignore') as gitignore:
-        shutil.copy(gitignore, os.getcwd())
+    with path('meerkatpm.templates', 'gitignore') as gitignore:
+        shutil.copy(gitignore, os.getcwd()+'/'+'.gitignore')
     with path('meerkatpm.templates', 'settings.json') as settings:
         shutil.copy(settings, os.getcwd()+"/.vscode")
     
