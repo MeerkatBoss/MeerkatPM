@@ -22,6 +22,7 @@ def init_folders() -> None:
     os.mkdir('build')
     os.mkdir('build/Debug')
     os.mkdir('build/Release')
+    os.mkdir('dist')
 
     with path('meerkatpm.templates', 'Doxyfile') as doxyfile:
         shutil.copy(doxyfile, os.getcwd())

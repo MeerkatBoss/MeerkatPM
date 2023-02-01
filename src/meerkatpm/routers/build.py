@@ -53,7 +53,7 @@ def build_package(args: List[str], project: Optional[Project]) -> Project:
     package_dir = f'{project.name}-{project.version}-linux-x86_64'
     os.mkdir(package_dir)
     subprocess.run(['cmake', '--install', 'build/Release', '--prefix', package_dir])
-    shutil.make_archive(package_dir, 'gztar', package_dir)
+    shutil.make_archive('dist/'+package_dir, 'gztar', package_dir)
     shutil.rmtree(package_dir)
 
     return project
