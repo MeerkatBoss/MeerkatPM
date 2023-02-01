@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="meerkatpm",
-    version="0.0.1",
+    version="1.0.0",
     description="Project manager for C/C++",
     author="Ivan Solodovnikov",
     author_email="solodovnikov.ia@phystech.edu",
