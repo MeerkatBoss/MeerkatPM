@@ -102,8 +102,10 @@ def project_import(args: List[str], project: Optional[Project]) -> Project:
 
     os.mkdir('imports')
     shutil.unpack_archive(filename, 'imports')
-    shutil.copytree('imports/lib', 'lib', dirs_exist_ok=True)
-    shutil.copytree('imports/include', 'lib/include', dirs_exist_ok=True)
+    if os.path.exists('imports/lib'):
+        shutil.copytree('imports/lib', 'lib', dirs_exist_ok=True)
+    if os.path.exists('imports/include'):
+        shutil.copytree('imports/include', 'lib/include', dirs_exist_ok=True)
     shutil.rmtree('imports')
     
     return project

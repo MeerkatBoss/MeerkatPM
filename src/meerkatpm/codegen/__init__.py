@@ -4,11 +4,15 @@ from itertools import chain
 from importlib.resources import read_text, path
 
 from meerkatpm.models import Module, Project
+from meerkatpm.utils import assert_error
 
 from .helpers import cmake_add_subdirectories, cmake_link_dependencies
 
 def get_module_cmake(module: Module) -> str:
-    result = f"add_library({module.name} {' '.join(module.sources)})\n"
+    if not module.sources:
+        result = f"add_library({module.name} INTERFACE)\n"
+    else:
+        result = f"add_library({module.name} {' '.join(module.sources)})\n"
     submodules = [m.name for m in module.submodules]
     dependencies = [m.name for m in module.dependencies]
 
@@ -20,8 +24,13 @@ def get_module_cmake(module: Module) -> str:
 
 
 def get_project_cmake(project: Project) -> str:
-    type = 'executable' if project.type == 'exe' else 'library'
-    result = f"add_{type}({project.name} {' '.join(project.sources)})\n"
+
+    if not project.sources and project.type == 'lib':
+        result = f"add_library({project.name} INTERFACE)\n"
+    else:
+        assert_error(len(project.sources) > 0, "Project of type 'exe' must have at least one source file.")
+        type = 'executable' if project.type == 'exe' else 'library'
+        result = f"add_{type}({project.name} {' '.join(project.sources)})\n"
 
     modules = [m.name for m in project.modules]
     
